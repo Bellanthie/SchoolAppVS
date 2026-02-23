@@ -1,10 +1,12 @@
-﻿namespace SchoolAppVS
-{
-    internal class Program
+﻿    using SchoolAppVS;
+
+    using var context = new SchoolContext();
+
+    var departments = context.Departments.ToList();
+
+    foreach (var department in departments)
     {
-        static void Main(string[] args)
-        {
-            Console.WriteLine("Hello, World!");
-        }
+    Console.WriteLine(department.Name);
     }
-}
+
+    // SQL SERVER DATABASE (SchoolAppVS) -> SchoolContext.cs (the bridge) -> Program.cs (my C# code)
