@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SchoolAppVS.Models
 {
-    internal class Course // Id, Name, IsActive
+    public class Course // Id, Name, IsActive
     {
         public int Id { get; set; }
         public string Name { get; set; }
