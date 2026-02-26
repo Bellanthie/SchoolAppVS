@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SchoolAppVS.Models
+namespace SchoolAppVS.Models // (Models = data-shape blueprints)
 {
     public class Staff // properties to match Staff: id, FirstName, Lastname, Title, Salary, StartDate, DepartmentId, Department
     {
@@ -18,4 +18,5 @@ namespace SchoolAppVS.Models
         // these two together tells EF "this staff member belongs to one department" (like references in SQL)
 
     }
+    // Staff has no constructor - Entity Framework (EF fills in all properties when it reads data from the database)
 }
