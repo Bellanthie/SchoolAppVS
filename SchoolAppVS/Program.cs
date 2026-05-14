@@ -1,14 +1,21 @@
-﻿using SchoolAppVS;
+﻿using Microsoft.EntityFrameworkCore;
+using SchoolAppVs.Models;
 
+
+EFQueries queries = new EFQueries();
 bool running = true;
 while (running)
 {
     Console.Clear();
-    Console.WriteLine("---Skolans Adminverktyg---");
+    Console.WriteLine("---Skolans Administrations System---");
     Console.WriteLine();
-    Console.WriteLine("1. Antal lärare per avdelning");
-    Console.WriteLine("2. Information om alla elever");
-    Console.WriteLine("3. Alla aktiva kurser");
+    Console.WriteLine("1. Hämta alla elever");
+    Console.WriteLine("2. Hämta alla elever i en viss klass");
+    Console.WriteLine("3. Lägg till ny personal");
+    Console.WriteLine("4. Hämta personal");
+    Console.WriteLine("5. Betyg satta senaste månaden");
+    Console.WriteLine("6. Snittbetyg per ämne");
+    Console.WriteLine("7. Lägg till ny elev");
     Console.WriteLine("0. Avsluta");
     Console.WriteLine();
     Console.Write("Välj ett alternativ: ");
@@ -18,25 +25,38 @@ while (running)
     switch (choice)
     {
         case "1":
-            EFQueries ef = new EFQueries(); // SQL Database -> EF -> C# -> Console
-            ef.TeachersPerDepartment();
+            queries.ObtainAllStudets();
             Console.ReadKey();
             break;
         case "2":
-            ef = new EFQueries();
-            ef.AllStudents();
+            queries.FetchStudentInSpecificClass();
             Console.ReadKey();
             break;
         case "3":
-            ef = new EFQueries();
-            ef.AllActiveCourses();
+            queries.AddStaff();
+            Console.ReadKey();
+            break;
+        case "4":
+            queries.ObtainAllStaff();
+            Console.ReadKey();
+            break;
+        case "5":
+            queries.GradeLastMonth();
+            Console.ReadKey();
+            break;
+        case "6":
+            queries.AverageGradePerSubject();
+            Console.ReadKey();
+            break;
+        case "7":
+            queries.AddNewStudent();
             Console.ReadKey();
             break;
         case "0":
-            running = false;
+            running = false; // exit the program
             break;
         default:
-            Console.WriteLine("Ogiltigt val, försök igen.");
+            Console.WriteLine("Ogiltigt val, försök igen."); // användaren måste välja en siffra
             Console.ReadKey();
             break;
     }

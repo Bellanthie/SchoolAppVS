@@ -17,9 +17,12 @@ namespace SchoolAppVS
         public DbSet<Course> Courses { get; set; }
         public DbSet<Grade> Grades { get; set; }
 
+
+        // Metod som talar om VAR databasen finns
+        // Connection string:
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer("Server=.;Database=SchoolApp;Trusted_Connection=True;TrustServerCertificate=True;");
+            optionsBuilder.UseSqlServer("Server=.;Database=Hogstadiet;Trusted_Connection=True;TrustServerCertificate=True;");
         }
     }
 }

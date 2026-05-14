@@ -4,6 +4,8 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+
 
 namespace SchoolAppVS.Models
 {
@@ -14,6 +16,7 @@ namespace SchoolAppVS.Models
         public string LastName { get; set; }
         public DateTime DateOfBirth { get; set; }
         public string Gender { get; set; }
+        //public string SocialSecurityNo { get; set; }
         public int ClassId { get; set; }
         public Class Class { get; set; }
     }
