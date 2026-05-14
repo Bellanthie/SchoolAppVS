@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using SchoolAppVs.Models;
+using SchoolAppVS.Models;
 
 
 EFQueries queries = new EFQueries();
@@ -25,7 +25,7 @@ while (running)
     switch (choice)
     {
         case "1":
-            queries.ObtainAllStudets();
+            queries.ObtainAllStudents();
             Console.ReadKey();
             break;
         case "2":
