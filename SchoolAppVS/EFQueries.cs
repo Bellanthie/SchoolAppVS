@@ -14,7 +14,12 @@ public class EFQueries // EFQueries = Entity Framework Queries (EF Core fills in
         string sortOrder = Console.ReadLine();
 
         using var context = new SchoolContext();
-        var students = context.Students.AsQueryable();
+        var students = context.Students
+            .Select(s => new
+            {
+                s.FirstName,
+                s.LastName
+            });
 
         if (sortVal == "1" && sortOrder == "1")
             students = students.OrderBy(s => s.FirstName);
@@ -37,9 +42,14 @@ public class EFQueries // EFQueries = Entity Framework Queries (EF Core fills in
     {
         using var context = new SchoolContext();
 
-        var classes = context.Classes.ToList();
+        var classes = context.Classes
+            .Select(c => new
+            {
+                c.Id,
+                c.Name
+            });
 
-        Console.WriteLine("\n ~~~ Hämta alla elever i en viss klass ~~~ ");
+        Console.WriteLine("\n ~~~ Tillgängliga Klasser ~~~ ");
 
         foreach (var c in classes)
         {
@@ -48,13 +58,16 @@ public class EFQueries // EFQueries = Entity Framework Queries (EF Core fills in
 
         // choose a class
         Console.WriteLine("\n Välj klass (skriv siffran): ");
-        string input = Console.ReadLine();
-        int classId = int.Parse(input);
+        int classId = int.Parse(Console.ReadLine());
 
         // obtain students within a specified class
         var students = context.Students
             .Where(s => s.ClassId == classId)
-            .ToList();
+            .Select(s => new
+            {
+                s.FirstName,
+                s.LastName
+            });
 
         Console.WriteLine("\n ~~~ Elever i vald klass ~~~ ");
         foreach (var student in students)
@@ -66,13 +79,37 @@ public class EFQueries // EFQueries = Entity Framework Queries (EF Core fills in
 
     public void AddStaff()
     {
-        using var context = new SchoolContext;
+        using var context = new SchoolContext();
+
+        // Show titles first
+        var titles = context.Titles
+            .Select(t => new
+            {
+                t.Id,
+                t.Name
+            });
+        Console.WriteLine("\n ~~~ Tillgängliga Titlar ~~~\n");
+        foreach (var title in titles)
+        {
+            Console.WriteLine($"{title.Id}. {title.Name}");
+        }
+
         Console.WriteLine("Lägg till ny personal: ");
-        Console.WriteLine("Förnamn: ");
+        Console.WriteLine("\nFörnamn: ");
         string firstName = Console.ReadLine();
 
         Console.WriteLine("Efternamn: ");
         string lastName = Console.ReadLine();
+        Console.WriteLine("Välj titel (skriv siffran): ");
+        int titleId = int.Parse(Console.ReadLine());
+
+        // create new object
+        var newStaff = new Staf
+        {
+            FirstName = firstName,
+            LastName = lastName,
+            TitleId = titleId
+        };
 
         var titles = context.Titles.ToList();
         
