@@ -6,13 +6,10 @@ using System.Threading.Tasks;
 
 namespace SchoolAppVS.Models
 {
-    public class Class
+    public class Title
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public List<Student> Students { get; set; }
-
-        public int? TeacherId { get; set; }
 
     }
 }

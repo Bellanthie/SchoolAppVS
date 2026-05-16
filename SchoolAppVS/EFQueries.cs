@@ -35,6 +35,46 @@ public class EFQueries // EFQueries = Entity Framework Queries (EF Core fills in
 
     public void FetchStudentsInSpecificClass()
     {
+        using var context = new SchoolContext();
+
+        var classes = context.Classes.ToList();
+
+        Console.WriteLine("\n ~~~ Hämta alla elever i en viss klass ~~~ ");
+
+        foreach (var c in classes)
+        {
+            Console.WriteLine($"{c.Id}. {c.Name}");
+        }
+
+        // choose a class
+        Console.WriteLine("\n Välj klass (skriv siffran): ");
+        string input = Console.ReadLine();
+        int classId = int.Parse(input);
+
+        // obtain students within a specified class
+        var students = context.Students
+            .Where(s => s.ClassId == classId)
+            .ToList();
+
+        Console.WriteLine("\n ~~~ Elever i vald klass ~~~ ");
+        foreach (var student in students)
+        {
+            Console.WriteLine($"{student.FirstName} {student.LastName}");
+        }
+
+    }
+
+    public void AddStaff()
+    {
+        using var context = new SchoolContext;
+        Console.WriteLine("Lägg till ny personal: ");
+        Console.WriteLine("Förnamn: ");
+        string firstName = Console.ReadLine();
+
+        Console.WriteLine("Efternamn: ");
+        string lastName = Console.ReadLine();
+
+        var titles = context.Titles.ToList();
         
     }
 

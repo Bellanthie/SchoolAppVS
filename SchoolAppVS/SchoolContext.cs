@@ -12,6 +12,7 @@ namespace SchoolAppVS
     {
         public DbSet<Department> Departments { get; set; }
         public DbSet<Staff> Staff { get; set; }
+        public DbSet<Title> Titles { get; set; }
         public DbSet<Student> Students { get; set; }
         public DbSet<Class> Classes { get; set; }
         public DbSet<Course> Courses { get; set; }

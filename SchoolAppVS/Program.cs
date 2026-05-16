@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SchoolAppVS.Models;
+using SchoolAppVS;
 
 
 EFQueries queries = new EFQueries();
