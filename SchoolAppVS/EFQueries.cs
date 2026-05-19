@@ -58,7 +58,12 @@ public class EFQueries // EFQueries = Entity Framework Queries (EF Core fills in
 
         // choose a class
         Console.WriteLine("\n Välj klass (skriv siffran): ");
-        int classId = int.Parse(Console.ReadLine());
+        if (!int.TryParse(Console.ReadLine(), out int classId))
+        {
+            Console.WriteLine("Ogiltigt val --> ange en siffra!");
+                return;
+        }
+        ;
 
         // obtain students within a specified class
         var students = context.Students
@@ -101,20 +106,223 @@ public class EFQueries // EFQueries = Entity Framework Queries (EF Core fills in
         Console.WriteLine("Efternamn: ");
         string lastName = Console.ReadLine();
         Console.WriteLine("Välj titel (skriv siffran): ");
-        int titleId = int.Parse(Console.ReadLine());
+        
+        // this code WONT run if user's input is wrong
+        if (!int.TryParse(Console.ReadLine(), out int titleId))
+        {
+            Console.WriteLine("Ogiltigt val --> ange en siffra!");
+            return; // stops the method here and goes back to the menu.
+        }
+        
 
         // create new object
-        var newStaff = new Staf
+        var newStaff = new Staff
         {
             FirstName = firstName,
             LastName = lastName,
             TitleId = titleId
         };
 
-        var titles = context.Titles.ToList();
-        
+
+        // save to database
+        context.Staff.Add(newStaff);
+        context.SaveChanges();
+
+        // confirm
+        Console.WriteLine($"\n {firstName} {lastName} har lagts till");
     }
 
+    public void ObtainAllStaff()
+    {
+        using var context = new SchoolContext();
+
+        Console.WriteLine("Visa 1) All Personal, 2) Endast en titel");
+        string val = Console.ReadLine();
+
+        if (val == "1")
+        {
+            //get all staff
+            var staff = context.Staff
+                .Select(s => new
+                {
+                    s.FirstName,
+                    s.LastName,
+                    s.TitleId
+                });
+            Console.WriteLine("\n ~~~ All Personal ~~~"); ;
+            foreach (var s in staff)
+            {
+                Console.WriteLine($"{s.FirstName}. {s.LastName} - TitelId: {s.TitleId} ");
+            }
+        }
+        else
+        {
+            // show the titles and allow the user to choose
+            var titles = context.Titles
+                .Select(t => new
+                {
+                    t.Id,
+                    t.Name
+                });
+            Console.WriteLine("\n~~~ Tillgängliga Titlar ~~~");
+            foreach (var title in titles)
+            {
+                Console.WriteLine($"{title.Id} {title.Name}");
+            }
+
+            Console.WriteLine("\n Välj titel (skriv siffran): ");
+            if (!int.TryParse(Console.ReadLine(), out int titleId))
+            {
+                Console.WriteLine("Ogiltigt val --> ange en siffra!");
+                return;
+            }
+
+            var filteredStaff = context.Staff
+                .Where(s => s.TitleId == titleId)
+                .Select(s => new
+                {
+                    s.FirstName,
+                    s.LastName
+                });
+            Console.WriteLine("\n~~~Personal med vald titel ~~~\n ");
+            foreach (var s in filteredStaff)
+            {
+                Console.WriteLine($"{s.FirstName} {s.LastName}");
+            }
+        }
+    }
+
+
+    public void GradesLastMonth()
+    {
+        using var context = new SchoolContext();
+
+        var oneMonthAgo = DateTime.Now.AddMonths(-1);
+
+        var grades = context.Grades
+            .Where(g => g.GradeDate >= oneMonthAgo)
+            .Select(g => new
+            {
+                // obtain the student's name directly through Students table
+                StudentName = context.Students
+                .Where(s => s.Id == g.StudentId)
+                .Select(s => s.FirstName + " " + s.LastName)
+                .FirstOrDefault(),
+
+                // obtain the subject name through subjects table
+                SubjectName = context.Subjects
+                .Where(s => s.Id == g.SubjectId)
+                .Select(s => s.Name)
+                .FirstOrDefault(),
+
+                g.GradeValue,
+                g.GradeDate
+            });
+
+        Console.WriteLine("\n ~~~Betyg satta senaste månaden ~~~");
+        foreach (var g in grades)
+        {
+            Console.WriteLine($"Elev: {g.StudentName} | " +
+                              $"Ämne: {g.SubjectName} | " +
+                              $"Betyg: {g.GradeValue} | " +
+                              $"Datum: {g.GradeDate:yyyy-MM-dd}");
+        }
+    }
+
+
+    public void AverageGradePerSubject()
+    {
+        using var context = new SchoolContext();
+        var subjects = context.Subjects
+            .Select(sub => new
+            {
+                SubjectName = sub.Name,
+
+                //transform grades to numbers for calculation
+                Grades = context.Grades
+                .Where(g => g.SubjectId == sub.Id)
+                .Select(g => g.GradeValue)
+                .ToList()
+            })
+            .ToList();
+
+        Console.WriteLine("\n ~~~ Snittbetyg per ämne ~~~\n");
+        foreach (var sub in subjects)
+        {
+            if (!sub.Grades.Any())
+            {
+                Console.WriteLine($"{sub.SubjectName}: Inga betyg");
+                continue;
+            }
+
+            // transform a letter to a number
+            var gradeNumbers = sub.Grades.Select(g => g switch
+            {
+                "A" => 5,
+                "B" => 4,
+                "C" => 3,
+                "D" => 2,
+                "E" => 1,
+                _ => 0
+            });
+
+            double avg = gradeNumbers.Average();
+            string highest = sub.Grades.OrderBy(g => g).First();
+            string lowest = sub.Grades.OrderByDescending(g => g).First();
+
+            Console.WriteLine($"{sub.SubjectName}: " +
+                $"Snitt: {avg:F1} | " +
+                $"Högsta: {highest} | " +
+                $"Lägsta: {lowest}");
+        }
+    }
+
+    public void AddNewStudent()
+    {
+        using var context = new SchoolContext();
+
+        // Visa klasser så användaren kan välja
+        var classes = context.Classes
+            .Select(c => new { c.Id, c.Name });
+
+        Console.WriteLine("\n==== Tillgängliga Klasser ====\n");
+        foreach (var c in classes)
+        {
+            Console.WriteLine($"{c.Id}. {c.Name}");
+        }
+
+        // Mata in uppgifter
+        Console.Write("\nFörnamn: ");
+        string firstName = Console.ReadLine();
+
+        Console.Write("Efternamn: ");
+        string lastName = Console.ReadLine();
+
+        Console.WriteLine("Födelsedatum (YYYY-MM-DD): ");
+        DateTime dateOfBirth = DateTime.Parse(Console.ReadLine());
+
+        Console.WriteLine("Kön (Man/Kvinna): ");
+        string gender = Console.ReadLine();
+
+        Console.WriteLine("Personnummer (YYYYMMDD-XXXX): ");
+        string socialSecurityNo = Console.ReadLine();
+
+        Console.WriteLine("Välj klass (skriv siffran): ");
+        if (!int.TryParse(Console.ReadLine(), out int classId))
+        {
+            Console.WriteLine("Ogiltigt val --> ange en siffra!");
+            return;
+        }
+
+        // Anropa stored procedure
+        context.Database.ExecuteSqlRaw(
+            "EXEC AddNewStudent @p0, @p1, @p2, @p3, @p4, @p5",
+            firstName, lastName, dateOfBirth, gender, socialSecurityNo, classId);
+
+        Console.WriteLine($"\n✅ {firstName} {lastName} har lagts till!");
+    }
+}
+ 
 
     // hämta personal
     //public void TeachersPerDepartment()
@@ -181,4 +389,4 @@ public class EFQueries // EFQueries = Entity Framework Queries (EF Core fills in
 
 
 
-}
+

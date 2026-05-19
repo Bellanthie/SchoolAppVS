@@ -30,7 +30,7 @@ while (running)
             Console.ReadKey();
             break;
         case "2":
-            queries.FetchStudentInSpecificClass();
+            queries.FetchStudentsInSpecificClass();
             Console.ReadKey();
             break;
         case "3":
@@ -42,7 +42,7 @@ while (running)
             Console.ReadKey();
             break;
         case "5":
-            queries.GradeLastMonth();
+            queries.GradesLastMonth();
             Console.ReadKey();
             break;
         case "6":
