@@ -14,12 +14,15 @@ namespace SchoolAppVS.Models // (Models = data-shape blueprints)
         public int TitleId { get; set; }
 
 
-        //public decimal Salary { get; set; }
-        //public DateTime StartDate { get; set; }
-        //public Department Department { get; set; } 
+        public decimal Salary { get; set; }
+        public DateTime HireDate { get; set; }
+        public int DepartmentId { get; set; } // FK nyckeln = passnumret
+
+        // navigation property Department: EF Core uses it to AUTO get the whole DEPTS object connected to DepartmentId
+        //these two together tells EF "this staff member belongs to one department" (like references in SQL)
+        public Department? Department { get; set; } //PASSET
 
 
-        // these two together tells EF "this staff member belongs to one department" (like references in SQL)
 
     }
     // Staff has no constructor - Entity Framework (EF fills in all properties when it reads data from the database)

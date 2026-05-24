@@ -18,5 +18,7 @@ namespace SchoolAppVS.Models
         public string Gender { get; set; } = string.Empty;
         public string SocialSecurityNo { get; set; } = string.Empty;
         public int ClassId { get; set; }
+        public Class? Class { get; set; }
+
     }
 }

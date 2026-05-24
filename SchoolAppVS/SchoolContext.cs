@@ -10,13 +10,15 @@ namespace SchoolAppVS
 {
     public class SchoolContext : DbContext
     {
-        //public DbSet<Department> Departments { get; set; }
         public DbSet<Staff> Staff { get; set; }
         public DbSet<Title> Titles { get; set; }
         public DbSet<Student> Students { get; set; }
         public DbSet<Class> Classes { get; set; }
         public DbSet<Subject> Subjects { get; set; }
         public DbSet<Grade> Grades { get; set; }
+
+        //ADO lägga till ny tabell
+        public DbSet<Department> Departments { get; set; }
 
 
         // Metod som talar om VAR databasen finns

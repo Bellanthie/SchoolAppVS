@@ -9,8 +9,8 @@ namespace SchoolAppVS.Models
     public class Department // properties to match Id, name, Staff
     {
         public int Id { get; set; }
-        public string Name { get; set; }
-        public List<Staff> Staff { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public List<Staff> Staff { get; set; } = new List<Staff>();
 
     }
 }

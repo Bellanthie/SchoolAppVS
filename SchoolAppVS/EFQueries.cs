@@ -18,10 +18,14 @@ public class EFQueries // EFQueries = Entity Framework Queries (EF Core fills in
 
         //IQueryable, query expression: recipe of anonymous type id+name
         var students = context.Students
+            .Include(s => s.Class)
             .Select(s => new
             {
                 s.FirstName,
-                s.LastName
+                s.LastName,
+                ClassName = s.Class.Name,
+                s.DateOfBirth,
+                s.Gender
             });
 
         if (sortVal == "1" && sortOrder == "1")
@@ -37,7 +41,10 @@ public class EFQueries // EFQueries = Entity Framework Queries (EF Core fills in
 
         foreach (var student in students)
         {
-            Console.WriteLine($"{student.FirstName} {student.LastName}");
+            Console.WriteLine($"{student.FirstName} {student.LastName} | " +
+                $"Klass: {student.ClassName} | " +
+                $"Född: {student.DateOfBirth:yyyy-MM-dd} | " +
+                $"Kön: {student.Gender}");
         }
     }
 
@@ -339,36 +346,37 @@ public class EFQueries // EFQueries = Entity Framework Queries (EF Core fills in
 
         Console.WriteLine($"\n✅ {firstName} {lastName} har lagts till!");
     }
-}
 
 
 
 
-// hämta personal
-//public void TeachersPerDepartment()
-//{
-//    using var context = new SchoolContext() ;
+    // get teachers per dept.
+    public void TeachersPerDepartment()
+    {
+        using var context = new SchoolContext();
 
-//        var result = context.Staff // starts with all staff members from the database.
-//        .Where(s => s.Title == "Lärare") // filters to only staff with the title "lärare"
-//        .GroupBy(s => s.Department.Name) // takes filtered teachers and groups staff by department name
-//        .Select(st => new // transforms each group into a new object
-//        {
-//            Department = st.Key, // department name
-//            NumberOfTeachers = st.Count() // # of teachers in that group
-//        })
-//        .ToList(); // fetches the requested data ABOVE from the database memory
+        var result = context.Staff // starts with all staff members from the database.
+        .Include(s => s.Department)
+        .Where(s => s.TitleId == 2) // filters to only staff with the title "lärare"
+        .GroupBy(s => s.Department.Name) // takes filtered teachers and groups staff by department name
+        .Select(g => new // transforms each group into a new object
+        {
+            Department = g.Key, // department name
+            NumberOfTeachers = g.Count() // # of teachers in that group
+        })
+        .ToList(); // fetches the requested data ABOVE from the database memory
 
-//        Console.WriteLine("=== Antal lärare per avdelning ===");
-//        Console.WriteLine();
+        Console.WriteLine("=== Antal lärare per avdelning ===");
+        Console.WriteLine();
 
-//            foreach (var row in result)
-//            {
-//                Console.WriteLine($"{row.Department}: {row.NumberOfTeachers} lärare");
-//            }
+        foreach (var row in result)
+        {
+            Console.WriteLine($"{row.Department}: {row.NumberOfTeachers} lärare");
+        }
 
-//    // database connection(key to filing cabinet). every method inside this class will have access to this key whenever it needs it
-//}
+        // database connection(key to filing cabinet). every method inside this class will have access to this key whenever it needs it
+    }
+
 
 
 //public void AllStudentsSorted()
@@ -389,22 +397,26 @@ public class EFQueries // EFQueries = Entity Framework Queries (EF Core fills in
 //    }
 //}
 
-//public void AllActiveCourses()
-//{
-//    using var context = new SchoolContext();
-//    var courses = context.Courses
-//        .Where(c => c.IsActive == true) // filters out any courses where IsActive is false.
-//        .ToList();
-//    Console.WriteLine("--- Alla aktiva kurser ---");
-//    Console.WriteLine();
+public void AllActiveCourses()
+    {
+        using var context = new SchoolContext();
+        var courses = context.Subjects
+            .Select(s => new
+            {
+                s.Id,
+                s.Name
+            })
+            .ToList();
 
-//    foreach (var course in courses)
-//    {
-//        Console.WriteLine($"- {course.Name}");
-//    }
-//}
+        Console.WriteLine("\n ~~~ Aktiva Kurser ~~~\n");
+        foreach (var course in courses)
+        {
+            Console.WriteLine($"{course.Id}. {course.Name}");
+        }
+    }
+}
 
-// 
+
 
 //private bool MakeSureUserEntersLetter(string name, string fieldName)
 //    {

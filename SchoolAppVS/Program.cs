@@ -2,7 +2,7 @@
 using SchoolAppVS.Models;
 using SchoolAppVS;
 
-
+ADOQueries adoQueries = new ADOQueries();
 EFQueries queries = new EFQueries();
 bool running = true;
 while (running)
@@ -17,6 +17,11 @@ while (running)
     Console.WriteLine("5. Betyg satta senaste månaden");
     Console.WriteLine("6. Snittbetyg per ämne");
     Console.WriteLine("7. Lägg till ny elev");
+    Console.WriteLine("8. Lärare per avdelning");
+    Console.WriteLine("9. Visa aktiva Kurser");
+    Console.WriteLine("10. Betyg per elev");
+    Console.WriteLine("11. Lön per avdelning");
+    Console.WriteLine("12. Medellön per avdelning");
     Console.WriteLine("0. Avsluta");
     Console.WriteLine();
     Console.Write("Välj ett alternativ: ");
@@ -38,7 +43,7 @@ while (running)
             Console.ReadKey();
             break;
         case "4":
-            queries.ObtainAllStaff();
+            adoQueries.ObtainAllStaff();
             Console.ReadKey();
             break;
         case "5":
@@ -51,6 +56,26 @@ while (running)
             break;
         case "7":
             queries.AddNewStudent();
+            Console.ReadKey();
+            break;
+        case "8":
+            queries.TeachersPerDepartment();
+            Console.ReadKey();
+            break;
+        case "9":
+            queries.AllActiveCourses();
+            Console.ReadKey();
+            break;
+        case "10":
+            adoQueries.GradesPerStudent();
+            Console.ReadKey();
+            break;
+        case "11":
+            adoQueries.SalaryPerDepartment();
+            Console.ReadKey();
+            break;
+        case "12":
+            adoQueries.AvgSalaryPerDepartment();
             Console.ReadKey();
             break;
         case "0":
