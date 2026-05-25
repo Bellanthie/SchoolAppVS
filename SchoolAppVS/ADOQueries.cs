@@ -41,7 +41,7 @@ namespace SchoolAppVS
                                   $"Titel: {reader["Title"],-15} | " +
                                   $"Avdelning: {reader["Department"],-35} | " +
                                   $"Anställd i: {yearsWorked} år");
-                
+
             }
         }
 
@@ -76,7 +76,7 @@ namespace SchoolAppVS
                                   $"Datum: {Convert.ToDateTime(reader["GradeDate"]):yyyy-MM-dd} | " +
                                   $"Lärare: {reader["Teacher"]}");
             }
-            
+
         }
 
         public void SalaryPerDepartment()
@@ -124,6 +124,79 @@ namespace SchoolAppVS
             }
         }
 
+        public void GetStudentById()
+        {
+            // wrong input -> letters or characters = return HALTS the code and gets back to where the method was called upon
+            Console.WriteLine("\nAnge elevens Id: ");
+            if (!int.TryParse(Console.ReadLine(), out int studentId))
+            {
+                Console.WriteLine("Ogiltigt Id!");
+                return;
+            }
+
+            // connection object = pipeline to database. using closes the pipeline automatically
+            using var connection = new SqlConnection(connectionString);
+            connection.Open();
+
+            // creates a command object which connects to SQL query
+            using var command = new SqlCommand("EXEC GetStudentById @StudentId", connection);
+            command.Parameters.AddWithValue("@StudentId", studentId); //protects the SQL injection
+
+            using var reader = command.ExecuteReader();
+
+            Console.WriteLine("\n ~~~ Elev info ~~~ ");
+            if (reader.Read())
+            {
+                Console.WriteLine($"Namn: {reader["FirstName"]} {reader["LastName"]}");
+                Console.WriteLine($"Född: {Convert.ToDateTime(reader["DateOfBirth"]):yyyy-MM-dd}");
+                Console.WriteLine($"Klass: {reader["ClassName"]}");
+            }
+            else
+                Console.WriteLine($"Ingen elev hittades.");
+        }
+
+        public void AddGradeWithTransaction()
+        {
+            using var connection = new SqlConnection(connectionString);
+            connection.Open();
+
+            Console.WriteLine("\nStudentId: ");
+            int.TryParse(Console.ReadLine(), out int studentId);
+
+            Console.WriteLine("SubjectId: ");
+            int.TryParse(Console.ReadLine(), out int subjectId);
+
+            Console.WriteLine("StaffId: ");
+            int.TryParse(Console.ReadLine(), out int staffId);
+
+            Console.WriteLine("Betyg (A-F): ");
+            string grade = Console.ReadLine();
+
+            using var transaction = connection.BeginTransaction();
+            try
+            {
+                using var command = new SqlCommand(
+                    "INSERT INTO Grades (StudentId, SubjectId, StaffId, Grade, GradeDate)" +
+                    "VALUES (@StudentId, @SubjectId, @StaffId, @Grade, @GradeDate)",
+                    connection, transaction);
+
+                command.Parameters.AddWithValue("@StudentId", studentId);
+                command.Parameters.AddWithValue("@SubjectId", subjectId);
+                command.Parameters.AddWithValue("@StaffId", staffId);
+                command.Parameters.AddWithValue("@Grade", grade);
+                command.Parameters.AddWithValue("@GradeDate", DateTime.Now);
+
+                command.ExecuteNonQuery();
+                transaction.Commit();
+                Console.WriteLine("\n Betyg sparat!");
+
+            }
+            catch (Exception ex)
+            {
+                transaction.Rollback();
+                Console.WriteLine($"\n Fel - allt ångrat: {ex.Message}");
+            }
+
+        }
     }
 }
-

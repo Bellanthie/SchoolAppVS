@@ -22,6 +22,7 @@ while (running)
     Console.WriteLine("10. Betyg per elev");
     Console.WriteLine("11. Lön per avdelning");
     Console.WriteLine("12. Medellön per avdelning");
+    Console.WriteLine("13. Hämta elev med Id");
     Console.WriteLine("0. Avsluta");
     Console.WriteLine();
     Console.Write("Välj ett alternativ: ");
@@ -76,6 +77,10 @@ while (running)
             break;
         case "12":
             adoQueries.AvgSalaryPerDepartment();
+            Console.ReadKey();
+            break;
+        case "13":
+            adoQueries.GetStudentById();
             Console.ReadKey();
             break;
         case "0":
